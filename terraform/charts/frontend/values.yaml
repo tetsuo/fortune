@@ -1,0 +1,23 @@
+replicaCount: 1
+
+frontend:
+  port: 8080
+  debugPort: 8081
+  image:
+    name: my-frontend-image
+    tag: latest
+  containerName: frontend-container
+  fqdn: ogu.nz
+  logLevel: debug
+  clusterEnv: kind
+
+database:
+  host: custom-database.ogu.nz
+  port: "3306"
+  user: kinduser
+  password: kindpassword  # DO NOT hardcode sensitive credentials in production!
+  name: fortune_db
+
+ingress:
+  enabled: true
+  class: haproxy

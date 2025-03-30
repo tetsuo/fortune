@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: {{ .Values.frontend.containerName }}
+          image: "{{ .Values.frontend.image.name }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          command: ["/home/runner/frontend-server"]
+          args: ["-host", "0.0.0.0"]
+          ports:
+            - containerPort: {{ .Values.frontend.port }}
+            - containerPort: {{ .Values.frontend.debugPort }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 666
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.frontend.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.frontend.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          envFrom:
+            - secretRef:
+                name: frontend
+            - configMapRef:
+                name: frontend

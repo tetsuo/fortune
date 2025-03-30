@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend
+data:
+  LOG_LEVEL: "{{ .Values.frontend.logLevel }}"
+  CLUSTER_ENV: "{{ .Values.frontend.clusterEnv }}"
+  PORT: "{{ .Values.frontend.port }}"
+  DEBUG_PORT: "{{ .Values.frontend.debugPort }}"
