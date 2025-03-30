@@ -1,0 +1,42 @@
+version: 2
+
+project_name: fortune
+
+before:
+  hooks:
+    - make tidy
+
+builds:
+  - id: frontend
+    main: ./cmd/frontend
+    binary: bin/frontend-server
+    flags:
+      - -trimpath
+      - -tags=netgo
+    env:
+      - CGO_ENABLED=0
+    asmflags:
+      - all=-trimpath={{.Env.GOPATH}}
+    gcflags:
+      - all=-trimpath={{.Env.GOPATH}}
+    ldflags: |
+      -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.CommitDate}} -extldflags '-static'
+    goos:
+      - linux
+    goarch:
+      - amd64
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: fortune
+    name_template: "fortune-{{.Version}}-{{.Os}}-{{.Arch}}"
+    format: tar.gz
+    files:
+      - etc/migrations/*.sql
+      - etc/openapi.yaml
+      - Dockerfile
+      - LICENSE
+      - NOTICE
+
+checksum:
+  name_template: "{{.ProjectName}}_{{.Version}}_SHA256SUMS"
