@@ -1,0 +1,12 @@
+mysql:
+  image:
+    repository: mysql
+    tag: latest
+  replicas: 1
+  user: some_user
+  password: some_secure_pass
+  rootPassword: example
+  database: fortune_db
+
+dnsPolicy: ClusterFirst
+restartPolicy: Always
