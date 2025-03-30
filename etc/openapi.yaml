@@ -1,0 +1,52 @@
+openapi: 3.0.3
+info:
+  title: Fortune API
+  description: API for storing and retrieving fortune cookies.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+paths:
+  /:
+    post:
+      summary: Insert new fortunes
+      description: Accepts a plain text request body containing fortunes, separated by `%` as per the original format of the Unix `fortune` command. The fortunes are stored in bulk.
+      operationId: insertFortunes
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: |
+                Fortune favors the bold.
+                %
+                You will have a pleasant surprise.
+      responses:
+        "201":
+          description: Fortunes successfully inserted.
+          headers:
+            X-Inserted-Count:
+              description: Number of inserted fortunes.
+              schema:
+                type: integer
+        "400":
+          description: No valid fortunes provided.
+        "413":
+          description: Request entity too large (exceeds 1MB).
+        "415":
+          description: Unsupported media type (must be text/plain).
+    get:
+      summary: Get a random fortune
+      description: Returns a randomly selected fortune from the database.
+      operationId: getFortune
+      responses:
+        "200":
+          description: Successfully retrieved a fortune.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "You will have a pleasant surprise."
+        "404":
+          description: No fortune found.
