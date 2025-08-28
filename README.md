@@ -1,14 +1,16 @@
-# Fortune API
+# fortune
 
-Fortune is a service for serving fortune cookies. It reuses internal code from [pkgsite](https://github.com/golang/pkgsite) (the Go package index), adapted for MySQL, and implements a lean, GCP-native stack with full observability. The project showcases a production-ready Go setup you can build on or deploy as-is.
+fortune is a simple HTTP API that serves random fortune cookies. It comes with observability and telemetry configured for GCP/GKE.
 
-- [Installation](#installation)
-- [API specification](./API.md)
-- [Development guide](./DEVELOPMENT.md)
+The API has two endpoints. `GET /` returns a random fortune from the database. `POST /` accepts a plain text body with fortunes separated by `%`, as per the original format of the Unix `fortune` command.
+
+* [Installation](#installation)
+* [API specification](./API.md)
+* [Development guide](./DEVELOPMENT.md)
 
 ## Installation
 
-Below are instructions for running the service locally or with **Kind**.
+Below are instructions for running the service locally or with [kind](https://kind.sigs.k8s.io/).
 
 ### Prerequisites
 
@@ -16,9 +18,9 @@ Ensure you have the following installed before proceeding:
 
 - [**Go**](https://go.dev/dl/) (≥ v1.23.3)
 - [**golang-migrate**](https://github.com/golang-migrate/migrate) (≥ v4.18.2)
-- [**Goreleaser**](https://goreleaser.com/) (≥ v2.1.0)
+- [**goreleaser**](https://goreleaser.com/) (≥ v2.1.0)
 - [**Docker**](https://www.docker.com/get-started) (latest recommended version)
-- [**Kind**](https://kind.sigs.k8s.io/docs/user/quick-start/) (≥ v0.27)
+- [**kind**](https://kind.sigs.k8s.io/docs/user/quick-start/) (≥ v0.27)
 - [**kubectl**](https://kubernetes.io/docs/tasks/tools/) (latest recommended version)
 - [**Terraform**](https://developer.hashicorp.com/terraform/downloads) (≥ v1.2.9)
 
@@ -113,7 +115,7 @@ If everything works, you should see logs like this:
 Try retrieving a fortune cookie:
 
 ```sh
-curl localhost:8080 ; echo
+curl localhost:8080
 ```
 
 🚨 **Expected output:** `Not Found` (because we haven't added fortunes yet).
@@ -131,7 +133,7 @@ curl -X POST -H "Content-Type: text/plain" \
 ### Retrieve a fortune
 
 ```sh
-curl localhost:8080 ; echo
+curl localhost:8080
 ```
 
 🔮 **Example output:** `"One planet is all you get."`
@@ -254,11 +256,11 @@ curl -X POST -H "Content-Type: text/plain" \
 ### 🔮 Get a fortune
 
 ```sh
-curl local.haproxy.kind:8080 ; echo
+curl local.haproxy.kind:8080
 ```
 
-🎉 **I hope it's a good one!**
+## Third-party code
 
-## License
+I reused some internals from [golang/pkgsite](https://go.googlesource.com/pkgsite/) (the Go package index) and adapted them to work with MySQL.
 
-MIT license
+Specifically, I modified the `internal/database` package to support MySQL, along with the CLI tool in `devtools/cmd/db`. The other borrowed packages from pkgsite (`memory`, `middleware`, `wraperr`) remain largely unchanged, aside from minor cleanup.
